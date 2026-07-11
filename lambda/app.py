@@ -1,19 +1,17 @@
 import requests
 from sentiment import get_sentiment
+from db import connection, cursor
+import os
+import json
+from news_api import fetch_news
+from s3_upload import upload_to_s3
 
-API_KEY = "bea85fcf2a4c4e32a5671b5dc5094594"
+data = fetch_news()
+# insert_into_database(data)
 
-url = f"https://newsapi.org/v2/top-headlines?" f"country=us&apiKey={API_KEY}"
-
-response = requests.get(url)
-
-data = response.json()
-# print(type(data))
-# print(data.keys())
+upload_to_s3()
 articles = data["articles"]
-# print(articles[0])
-# # print(response.status_code)
-# # print(response.json())
+
 
 # print(articles["source"]["name"])
 # print(source)
@@ -25,10 +23,17 @@ for article in articles:
     source = article["source"]["name"]
     sentiment = get_sentiment("title")
 
-    print("Title       :", title)
-    print("Author      :", author)
-    print("Description :", description)
-    print("Published At:", publishedAt)
-    print("Source      :", source)
-    print("Sentiment    :", sentiment)
-    print("-" * 60)
+    cursor.execute(
+        """
+    INSERT INTO news_articles
+    (title, author, source, description, published_at, sentiment)
+    VALUES (%s, %s, %s, %s, %s, %s)
+    """,
+        (title, author, source, description, publishedAt, sentiment),
+    )
+connection.commit()
+cursor.close()
+connection.close()
+
+
+print("News articles inserted")

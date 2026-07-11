@@ -1,10 +1,24 @@
 import psycopg2
+from config import (
+    DB_HOST,
+    DB_NAME,
+    DB_USER,
+    DB_PASSWORD,
+    DB_PORT,
+)
 
 connection = psycopg2.connect(
-    host="localhost",
-    database="news_pipeline",
-    user="postgres",
-    password="post123",
-    port="5432",
+    host=DB_HOST,
+    database=DB_NAME,
+    user=DB_USER,
+    password=DB_PASSWORD,
+    port=DB_PORT,
 )
-print("Database connected successfully!")
+
+cursor = connection.cursor()
+
+# cursor.execute("""CREATE TABLE IF NOT EXISTS test_connection(
+#     id SERIAL PRIMARY KEY,
+#     message TEXT);""")
+# connection.commit()
+# print("Database connected successfully!")
