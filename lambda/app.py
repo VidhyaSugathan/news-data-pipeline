@@ -5,6 +5,7 @@ import os
 import json
 from news_api import fetch_news
 from s3_upload import upload_to_s3
+import streamlit as st
 
 data = fetch_news()
 # insert_into_database(data)
