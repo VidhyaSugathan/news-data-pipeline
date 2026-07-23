@@ -10,8 +10,7 @@ s3 = boto3.client(
     region_name=os.getenv("AWS_REGION"),
 )
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(BASE_DIR, "data", "news.json")
+file_path = "/tmp/news.json"
 
 bucket_name = os.getenv("S3_BUCKET_NAME")
 

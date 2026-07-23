@@ -5,7 +5,6 @@ import os
 import json
 from news_api import fetch_news
 from s3_upload import upload_to_s3
-import streamlit as st
 
 data = fetch_news()
 # insert_into_database(data)
@@ -22,7 +21,7 @@ for article in articles:
     description = article["description"] or "No description"
     publishedAt = article["publishedAt"]
     source = article["source"]["name"]
-    sentiment = get_sentiment("title")
+    sentiment = get_sentiment(title)
 
     cursor.execute(
         """
