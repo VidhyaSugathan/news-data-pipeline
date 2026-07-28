@@ -1,55 +1,58 @@
 News Sentiment Data Pipeline
 
-A serverless, event-driven data pipeline that ingests live news articles every 5 minutes, scores their sentiment, and displays the results on a real-time analytics dashboard — built entirely on AWS.
+An end-to-end automated data pipeline that ingests live news articles every 5 minutes, scores their sentiment, and displays the results on a real-time analytics dashboard — built entirely on AWS.
 
 Architecture
-EventBridge (5-min schedule)
-        │
-        ▼
-   AWS Lambda ──► NewsAPI (fetch articles)
-        │
-        ├──► VADER sentiment analysis
-        ├──► Raw JSON → Amazon S3 (backup/audit trail)
-        └──► Structured rows → Amazon RDS (PostgreSQL)
-                          │
-                          ▼
-                 Amazon ECS Fargate
-                 (Dockerized Streamlit dashboard)
-                          │
-                          ▼
-                  Live public dashboard
 
-Flow: EventBridge triggers a Lambda function every 5 minutes. The function fetches the latest headlines from NewsAPI, scores each article's sentiment, archives the raw response in S3, and writes clean structured records to a PostgreSQL database on RDS. A separate, containerized Streamlit dashboard — deployed on ECS Fargate — reads from that same database and displays live sentiment trends.
+Show Image
 
 Tech Stack
-Layer	Technology
-Ingestion / compute	AWS Lambda (Python)
-Scheduling	Amazon EventBridge
-Raw data storage	Amazon S3
-Database	Amazon RDS (PostgreSQL)
-Sentiment analysis	VADER (vaderSentiment)
-Dashboard	Streamlit
-Containerization	Docker
-Container registry	Amazon ECR
-Container hosting	Amazon ECS (Fargate)
+Service Purpose
+AWS EventBridge Scheduled trigger (every 5 minutes)
+AWS Lambda (Python) Fetch news, score sentiment, write to S3 + RDS
+NewsAPI Live news data source
+VADER (vaderSentiment) Sentiment scoring
+AWS S3 Raw data storage (JSON backup/audit trail)
+AWS RDS (PostgreSQL) Structured, query-ready article storage
+Docker Containerizes the dashboard app
+AWS ECR Container image registry
+AWS ECS (Fargate) Runs the dashboard as a live service
+Streamlit Analytics dashboard
+Pipeline Flow
+EventBridge (5-minute schedule)
+↓
+Lambda → fetches articles from NewsAPI
+↓
+VADER → scores sentiment (positive / negative / neutral)
+↓
+Raw JSON → S3 (backup/audit trail)
+↓
+Structured rows → RDS PostgreSQL (news_articles table)
+↓
+ECS Fargate (Dockerized Streamlit dashboard) reads from RDS
+↓
+Live public dashboard
 Project Structure
 news-data-pipeline/
-├── lambda/                 # Ingestion function (deployed to AWS Lambda)
-│   ├── app.py               # Entry point (lambda_handler)
-│   ├── news_api.py          # Fetches articles from NewsAPI
-│   ├── sentiment.py         # Scores sentiment using VADER
-│   ├── s3_upload.py         # Archives raw JSON to S3
-│   ├── db.py                # PostgreSQL connection (psycopg2)
-│   ├── config.py            # API key configuration
-│   └── requirements.txt
+├── lambda/ # Ingestion function (deployed to AWS Lambda)
+│ ├── app.py # Entry point (lambda_handler)
+│ ├── news_api.py # Fetches articles from NewsAPI
+│ ├── sentiment.py # Scores sentiment using VADER
+│ ├── s3_upload.py # Archives raw JSON to S3
+│ ├── db.py # PostgreSQL connection (psycopg2)
+│ ├── config.py # API key configuration
+│ └── requirements.txt
 │
-├── dashboard/               # Streamlit dashboard (deployed to ECS Fargate)
-│   ├── app.py                # Reads from RDS, renders charts
-│   ├── Dockerfile
-│   └── requirements.txt
+├── dashboard/ # Streamlit dashboard (deployed to ECS Fargate)
+│ ├── app.py # Reads from RDS, renders charts
+│ ├── Dockerfile
+│ └── requirements.txt
 │
 ├── sql/
-│   └── create_table.sql      # Database schema
+│ └── create_table.sql # Database schema
+│
+├── architecture/
+│ └── architecture1.jpeg # Pipeline architecture diagram
 │
 └── README.md
 Dashboard Features
@@ -65,7 +68,7 @@ Dashboard:
 bash
 cd dashboard
 python -m venv venv
-source venv/bin/activate      # Windows: venv\Scripts\activate
+source venv/bin/activate # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 streamlit run app.py
 
@@ -102,3 +105,7 @@ Network debugging: used AWS Reachability Analyzer to systematically verify secur
 License
 
 Personal portfolio project — built for learning and demonstration purposes.
+
+Author
+
+Vidhya Sugathan Data Engineer | AWS | Python | SQL | Docker LinkedIn | Portfolio
