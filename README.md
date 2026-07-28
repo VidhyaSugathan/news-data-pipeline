@@ -2,9 +2,7 @@ News Sentiment Data Pipeline
 
 An end-to-end automated data pipeline that ingests live news articles every 5 minutes, scores their sentiment, and displays the results on a real-time analytics dashboard — built entirely on AWS.
 
-Architecture
-
-Show Image
+Architecture (images/architecture.png)
 
 Tech Stack
 Service Purpose
